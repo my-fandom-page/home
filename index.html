@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="小说、翻译、随笔，以及一些暂时不知道该归到哪里的东西。">
+  <meta name="theme-color" content="#090b0c">
+  <title>个人作品与杂物</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090b0c;
+      --panel: #101416;
+      --panel-bright: #141a17;
+      --text: #d8e1dc;
+      --muted: #7f8c85;
+      --signal: #9cf7bd;
+      --signal-soft: rgba(156, 247, 189, .12);
+      --line: #26312b;
+      --page: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(rgba(156, 247, 189, .018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(156, 247, 189, .018) 1px, transparent 1px),
+        var(--bg);
+      background-size: 32px 32px;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.75;
+    }
+
+    a { color: inherit; }
+    a:focus-visible { outline: 2px solid var(--signal); outline-offset: 5px; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .shell {
+      width: min(var(--page), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      z-index: 10;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9, 11, 12, .88);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-header .shell {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand, .nav a, .eyebrow, .section-label, .work-meta, .status-line, .footer-line {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      color: var(--signal);
+      font-size: .82rem;
+      text-decoration: none;
+    }
+
+    .brand::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 10px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 16px var(--signal);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    .nav { display: flex; gap: 22px; }
+    .nav a {
+      color: var(--muted);
+      font-size: .72rem;
+      text-decoration: none;
+    }
+    .nav a:hover { color: var(--signal); }
+
+    .hero {
+      min-height: min(760px, calc(100vh - 64px));
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(230px, .55fr);
+      align-items: end;
+      gap: 72px;
+      padding: 120px 0 88px;
+    }
+
+    .eyebrow, .section-label, .status-line {
+      color: var(--signal);
+      font-size: .76rem;
+    }
+
+    .hero h1 {
+      max-width: 790px;
+      margin: 20px 0 30px;
+      font-size: clamp(3.2rem, 8.5vw, 7.8rem);
+      font-weight: 650;
+      letter-spacing: -.07em;
+      line-height: .92;
+    }
+
+    .hero h1 span {
+      display: block;
+      color: var(--signal);
+    }
+
+    .intro {
+      max-width: 640px;
+      margin: 0;
+      color: #abb7b0;
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+    }
+
+    .receiver {
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: rgba(16, 20, 22, .74);
+    }
+
+    .receiver p { margin: 0; }
+    .receiver .readout {
+      margin: 14px 0 24px;
+      color: var(--signal);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1;
+    }
+
+    .meter {
+      height: 3px;
+      margin-top: 18px;
+      overflow: hidden;
+      background: var(--line);
+    }
+
+    .meter::after {
+      content: "";
+      display: block;
+      width: 62%;
+      height: 100%;
+      background: var(--signal);
+      box-shadow: 0 0 14px var(--signal);
+    }
+
+    section { padding: 100px 0; border-top: 1px solid var(--line); }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      align-items: end;
+      gap: 40px;
+      margin-bottom: 44px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 600;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .section-note { margin: 0; color: var(--muted); }
+
+    .works { display: grid; gap: 12px; }
+
+    .work {
+      position: relative;
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 28px;
+      min-height: 150px;
+      padding: 28px 32px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      text-decoration: none;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    a.work:hover {
+      border-color: var(--signal);
+      background: var(--panel-bright);
+      transform: translateX(5px);
+    }
+
+    .work-number { color: var(--muted); font-size: .78rem; }
+    .work h3 { margin: 4px 0 6px; font-size: clamp(1.3rem, 3vw, 2rem); line-height: 1.2; }
+    .work p { margin: 0; color: var(--muted); }
+    .work-meta { color: var(--signal); font-size: .7rem; }
+    .arrow { color: var(--signal); font-size: 1.5rem; }
+
+    .work.placeholder { opacity: .5; }
+    .work.placeholder .arrow { color: var(--muted); }
+
+    .pairings { display: grid; gap: 24px; }
+
+    .pairing {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .pairing-head {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 28px;
+      padding: 34px 32px;
+      border-bottom: 1px solid var(--line);
+      background: var(--signal-soft);
+    }
+
+    .pairing-head h3 {
+      margin: 4px 0 0;
+      font-size: clamp(2.3rem, 6vw, 4.8rem);
+      font-weight: 620;
+      letter-spacing: -.06em;
+      line-height: 1;
+    }
+
+    .pairing-home { display: block; text-decoration: none; }
+    .pairing-home h3 { transition: color .2s ease; }
+    .pairing-home:hover h3 { color: var(--signal); }
+
+    .pairing-count {
+      color: var(--signal);
+      font: .72rem/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .piece {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 28px;
+      min-height: 108px;
+      padding: 22px 32px;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      transition: color .2s ease, background .2s ease, padding .2s ease;
+    }
+
+    .piece:last-child { border-bottom: 0; }
+    a.piece:hover { color: var(--signal); background: var(--panel-bright); padding-left: 38px; }
+    .piece-number { color: var(--muted); font-size: .75rem; }
+    .piece h4 { margin: 3px 0 0; font-size: clamp(1.15rem, 2.5vw, 1.55rem); font-weight: 550; line-height: 1.3; }
+    .piece-note { color: var(--muted); font-size: .78rem; }
+    .piece.pending { opacity: .72; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, .7fr);
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-copy {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2.25rem);
+      line-height: 1.5;
+      letter-spacing: -.025em;
+    }
+
+    .about-copy p { margin: 0 0 1em; }
+    .about-copy p:last-child { margin-bottom: 0; }
+    .about-copy .aside-note { color: var(--muted); font-size: .58em; line-height: 1.75; letter-spacing: 0; }
+
+    .placeholder-copy { color: var(--muted); }
+
+    .details {
+      margin: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .details div {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .details dt { color: var(--muted); }
+    .details dd { margin: 0; text-align: right; }
+    .details a { color: var(--signal); text-underline-offset: 4px; }
+
+    footer { padding: 34px 0 48px; border-top: 1px solid var(--line); }
+    footer .shell { display: flex; justify-content: space-between; gap: 24px; }
+    .footer-line { margin: 0; color: var(--muted); font-size: .68rem; }
+    .cursor { color: var(--signal); animation: blink 1s steps(1) infinite; }
+
+    @keyframes pulse { 50% { opacity: .35; box-shadow: 0 0 4px var(--signal); } }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 32px, var(--page)); }
+      .nav { gap: 14px; }
+      .nav a:nth-child(2) { display: none; }
+      .hero { min-height: auto; grid-template-columns: 1fr; gap: 50px; padding: 92px 0 64px; }
+      .hero h1 { letter-spacing: -.055em; }
+      section { padding: 72px 0; }
+      .section-head, .about-grid { grid-template-columns: 1fr; gap: 24px; }
+      .work { grid-template-columns: 38px 1fr auto; gap: 14px; padding: 24px 18px; }
+      .work p { display: none; }
+      .pairing-head { grid-template-columns: 38px 1fr; gap: 14px; padding: 26px 18px; }
+      .pairing-count { grid-column: 2; }
+      .piece { grid-template-columns: 38px 1fr; gap: 14px; padding: 20px 18px; }
+      .piece-note { grid-column: 2; }
+      a.piece:hover { padding-left: 18px; }
+      footer .shell { display: block; }
+      .footer-line + .footer-line { margin-top: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <a class="brand" href="#top">Things I Made</a>
+      <nav class="nav" aria-label="主导航">
+        <a href="#works">Works</a>
+        <a href="#about">About</a>
+        <a href="#now">Now</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="shell hero">
+      <div>
+        <p class="eyebrow">// A personal index of things</p>
+        <h1>我做过的<span>一些东西。</span></h1>
+        <p class="intro">小说、翻译、随笔，以及一些因为太喜欢而没法不做、暂时也不知道该归到哪里的东西。</p>
+      </div>
+
+      <aside class="receiver mono" aria-label="主页状态">
+        <p class="status-line">Index status</p>
+        <p class="readout">∞</p>
+        <p>ORDER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUESTIONABLE</p>
+        <p>STATUS&nbsp;&nbsp;&nbsp;&nbsp;STILL MAKING THINGS</p>
+        <div class="meter" aria-hidden="true"></div>
+      </aside>
+    </div>
+
+    <section id="works">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <p class="section-label">01 // Works &amp; Misc.</p>
+            <h2>作品与杂物</h2>
+          </div>
+          <p class="section-note">写完的、翻完的、正在发生的，以及理直气壮没有分类的东西。</p>
+        </div>
+
+        <div class="pairings">
+          <section class="pairing" aria-labelledby="yumin-heading">
+            <header class="pairing-head">
+              <span class="work-number mono">01</span>
+              <a class="pairing-home" href="../yumin/"><span class="work-meta">Chyi Yu × Mao Amin</span><h3 id="yumin-heading">豫敏 →</h3></a>
+              <span class="pairing-count">04 works</span>
+            </header>
+            <div>
+              <a class="piece" href="../yumin/After-the-Echo/">
+                <span class="piece-number mono">01.1</span>
+                <div><span class="work-meta">Longfic // Complete</span><h4>回声以后 · After the Echo</h4></div>
+                <span class="piece-note">七章 + 后记 ↗</span>
+              </a>
+              <a class="piece" href="../yumin/I-Will-Always-Love-You/">
+                <span class="piece-number mono">01.2</span>
+                <div><span class="work-meta">Short Story</span><h4>I Will Always Love You</h4></div>
+                <span class="piece-note">阅读全文 ↗</span>
+              </a>
+              <a class="piece" href="../yumin/Covered-in-Rain/">
+                <span class="piece-number mono">01.3</span>
+                <div><span class="work-meta">Short Story</span><h4>Covered in Rain</h4></div>
+                <span class="piece-note">阅读全文 ↗</span>
+              </a>
+              <a class="piece" href="../yumin/All-I-Need/">
+                <span class="piece-number mono">01.4</span>
+                <div><span class="work-meta">Short Story</span><h4>All I Need</h4></div>
+                <span class="piece-note">阅读全文 ↗</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="pairing" aria-labelledby="shoot-heading">
+            <header class="pairing-head">
+              <span class="work-number mono">02</span>
+              <div><span class="work-meta">Root × Sameen Shaw</span><h3 id="shoot-heading">肖根</h3></div>
+              <span class="pairing-count">01 work</span>
+            </header>
+            <div>
+              <a class="piece" href="https://my-fandom-page.github.io/The-Signals-Just-a-Roar/">
+                <span class="piece-number mono">02.1</span>
+                <div><span class="work-meta">Translation // In Progress</span><h4>信号仅是个呼啸</h4></div>
+                <span class="piece-note">Chapter 1 ↗</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="pairing" aria-labelledby="misc-heading">
+            <header class="pairing-head">
+              <span class="work-number mono">03</span>
+              <div><span class="work-meta">Essays // Character Studies // Misc.</span><h3 id="misc-heading">随笔与其他</h3></div>
+              <span class="pairing-count">Sorting things out</span>
+            </header>
+            <div>
+              <div class="piece pending">
+                <span class="piece-number mono">03.?</span>
+                <div><span class="work-meta">Coming later</span><h4>正在整理一些乱七八糟的东西……</h4></div>
+                <span class="piece-note">暂未开放</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <p class="section-label">02 // About</p>
+            <h2>关于我</h2>
+          </div>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-copy">
+            <p class="aside-note">本业是在读 PhD，做 AI / ML。白天和模型、实验以及没完没了的代码bug相处；剩下的时间写东西、玩乐队、拍照片，也会认真追逐任何突然变得很有趣的东西。</p>
+          </div>
+
+          <dl class="details mono" id="now">
+            <div><dt>DAY JOB</dt><dd>PHD / AI / ML</dd></div>
+            <div><dt>PLAYING</dt><dd>IN A BAND</dd></div>
+            <div><dt>LOOKING</dt><dd>THROUGH A CAMERA</dd></div>
+            <div><dt>STATUS</dt><dd>CURIOUS, PROBABLY</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p class="footer-line">The archive continues <span class="cursor">_</span></p>
+      <p class="footer-line">A place for finished work and glorious miscellany.</p>
+    </div>
+  </footer>
+</body>
+</html>
