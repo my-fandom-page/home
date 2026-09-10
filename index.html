@@ -4,8 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="小说、翻译、随笔，以及一些暂时不知道该归到哪里的东西。">
-  <meta name="theme-color" content="#090b0c">
+  <meta name="theme-color" content="#090b0c" id="theme-color">
   <title>个人作品与杂物</title>
+  <script>
+    (() => {
+      const saved = localStorage.getItem("site-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved === "dark" || saved === "light" ? saved : preferred;
+    })();
+  </script>
   <style>
     :root {
       color-scheme: dark;
@@ -17,7 +24,27 @@
       --signal: #9cf7bd;
       --signal-soft: rgba(156, 247, 189, .12);
       --line: #26312b;
+      --grid: rgba(156, 247, 189, .018);
+      --header: rgba(9, 11, 12, .88);
+      --intro: #abb7b0;
+      --glass: rgba(16, 20, 22, .74);
       --page: 1120px;
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f2f0e8;
+      --panel: #faf9f3;
+      --panel-bright: #edf4ed;
+      --text: #17231d;
+      --muted: #647168;
+      --signal: #167246;
+      --signal-soft: rgba(22, 114, 70, .09);
+      --line: #c8d2ca;
+      --grid: rgba(22, 114, 70, .048);
+      --header: rgba(242, 240, 232, .9);
+      --intro: #405249;
+      --glass: rgba(250, 249, 243, .8);
     }
 
     * { box-sizing: border-box; }
@@ -27,13 +54,14 @@
       margin: 0;
       min-width: 320px;
       background:
-        linear-gradient(rgba(156, 247, 189, .018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(156, 247, 189, .018) 1px, transparent 1px),
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
         var(--bg);
       background-size: 32px 32px;
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
       line-height: 1.75;
+      transition: background-color .3s ease, color .3s ease;
     }
 
     a { color: inherit; }
@@ -53,8 +81,9 @@
       z-index: 10;
       top: 0;
       border-bottom: 1px solid var(--line);
-      background: rgba(9, 11, 12, .88);
+      background: var(--header);
       backdrop-filter: blur(14px);
+      transition: background-color .3s ease, border-color .3s ease;
     }
 
     .site-header .shell {
@@ -89,13 +118,42 @@
       animation: pulse 2.2s ease-in-out infinite;
     }
 
-    .nav { display: flex; gap: 22px; }
+    .header-actions, .nav { display: flex; align-items: center; }
+    .header-actions { gap: 24px; }
+    .nav { gap: 22px; }
     .nav a {
       color: var(--muted);
       font-size: .72rem;
       text-decoration: none;
     }
     .nav a:hover { color: var(--signal); }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 82px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--signal);
+      font: .68rem/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease, background .3s ease, transform .2s ease;
+    }
+    .theme-toggle:hover { border-color: var(--signal); transform: translateY(-1px); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--signal); outline-offset: 4px; }
+    .theme-icon {
+      display: grid;
+      width: 18px;
+      height: 18px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--signal-soft);
+      font-size: .84rem;
+    }
 
     .hero {
       min-height: min(760px, calc(100vh - 64px));
@@ -128,14 +186,14 @@
     .intro {
       max-width: 640px;
       margin: 0;
-      color: #abb7b0;
+      color: var(--intro);
       font-size: clamp(1.05rem, 2vw, 1.3rem);
     }
 
     .receiver {
       padding: 22px;
       border: 1px solid var(--line);
-      background: rgba(16, 20, 22, .74);
+      background: var(--glass);
     }
 
     .receiver p { margin: 0; }
@@ -219,6 +277,7 @@
       overflow: hidden;
       border: 1px solid var(--line);
       background: var(--panel);
+      transition: background-color .3s ease, border-color .3s ease;
     }
 
     .pairing-head {
@@ -316,8 +375,11 @@
 
     @media (max-width: 760px) {
       .shell { width: min(100% - 32px, var(--page)); }
+      .header-actions { gap: 12px; }
       .nav { gap: 14px; }
       .nav a:nth-child(2) { display: none; }
+      .theme-toggle { min-width: 38px; padding: 7px 9px; }
+      .theme-label { display: none; }
       .hero { min-height: auto; grid-template-columns: 1fr; gap: 50px; padding: 92px 0 64px; }
       .hero h1 { letter-spacing: -.055em; }
       section { padding: 72px 0; }
@@ -343,11 +405,17 @@
   <header class="site-header">
     <div class="shell">
       <a class="brand" href="#top">Things I Made</a>
-      <nav class="nav" aria-label="主导航">
-        <a href="#works">Works</a>
-        <a href="#about">About</a>
-        <a href="#now">Now</a>
-      </nav>
+      <div class="header-actions">
+        <nav class="nav" aria-label="主导航">
+          <a href="#works">Works</a>
+          <a href="#about">About</a>
+          <a href="#now">Now</a>
+        </nav>
+        <button class="theme-toggle" id="theme-toggle" type="button">
+          <span class="theme-icon" aria-hidden="true">☼</span>
+          <span class="theme-label">DAY</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -383,7 +451,7 @@
             <header class="pairing-head">
               <span class="work-number mono">01</span>
               <a class="pairing-home" href="../yumin/"><span class="work-meta">Chyi Yu × Mao Amin</span><h3 id="yumin-heading">豫敏 →</h3></a>
-              <span class="pairing-count">04 works</span>
+              <span class="pairing-count">05 works</span>
             </header>
             <div>
               <a class="piece" href="../yumin/After-the-Echo/">
@@ -391,18 +459,23 @@
                 <div><span class="work-meta">Longfic // Complete</span><h4>回声以后 · After the Echo</h4></div>
                 <span class="piece-note">七章 + 后记 ↗</span>
               </a>
-              <a class="piece" href="../yumin/I-Will-Always-Love-You/">
+              <a class="piece" href="../yumin/The-Garden-of-Forking-Paths/">
                 <span class="piece-number mono">01.2</span>
+                <div><span class="work-meta">Longfic // In Progress</span><h4>小径分岔的花园 · The Garden of Forking Paths</h4></div>
+                <span class="piece-note">第一章 ↗</span>
+              </a>
+              <a class="piece" href="../yumin/I-Will-Always-Love-You/">
+                <span class="piece-number mono">01.3</span>
                 <div><span class="work-meta">Short Story</span><h4>I Will Always Love You</h4></div>
                 <span class="piece-note">阅读全文 ↗</span>
               </a>
               <a class="piece" href="../yumin/Covered-in-Rain/">
-                <span class="piece-number mono">01.3</span>
+                <span class="piece-number mono">01.4</span>
                 <div><span class="work-meta">Short Story</span><h4>Covered in Rain</h4></div>
                 <span class="piece-note">阅读全文 ↗</span>
               </a>
               <a class="piece" href="../yumin/All-I-Need/">
-                <span class="piece-number mono">01.4</span>
+                <span class="piece-number mono">01.5</span>
                 <div><span class="work-meta">Short Story</span><h4>All I Need</h4></div>
                 <span class="piece-note">阅读全文 ↗</span>
               </a>
@@ -428,14 +501,24 @@
             <header class="pairing-head">
               <span class="work-number mono">03</span>
               <div><span class="work-meta">Essays // Character Studies // Misc.</span><h3 id="misc-heading">随笔与其他</h3></div>
-              <span class="pairing-count">Sorting things out</span>
+              <span class="pairing-count">03 pieces</span>
             </header>
             <div>
-              <div class="piece pending">
-                <span class="piece-number mono">03.?</span>
-                <div><span class="work-meta">Coming later</span><h4>正在整理一些乱七八糟的东西……</h4></div>
-                <span class="piece-note">暂未开放</span>
-              </div>
+              <a class="piece" href="Sketch/NYC/">
+                <span class="piece-number mono">03.1</span>
+                <div><span class="work-meta">Essay // New York City</span><h4>纽约</h4></div>
+                <span class="piece-note">城市随笔 ↗</span>
+              </a>
+              <a class="piece" href="Sketch/Lohse/">
+                <span class="piece-number mono">03.2</span>
+                <div><span class="work-meta">人物侧写 // 神界：原罪 2 · Divinity: Original Sin 2</span><h4>洛思</h4></div>
+                <span class="piece-note">神界：原罪 2 ↗</span>
+              </a>
+              <a class="piece" href="Sketch/Yennefer/">
+                <span class="piece-number mono">03.3</span>
+                <div><span class="work-meta">人物侧写 // 巫师 3：狂猎 · The Witcher 3: Wild Hunt</span><h4>叶奈法</h4></div>
+                <span class="piece-note">巫师 3：狂猎 ↗</span>
+              </a>
             </div>
           </section>
         </div>
@@ -473,5 +556,35 @@
       <p class="footer-line">A place for finished work and glorious miscellany.</p>
     </div>
   </footer>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme-toggle");
+      const icon = toggle.querySelector(".theme-icon");
+      const label = toggle.querySelector(".theme-label");
+      const themeColor = document.getElementById("theme-color");
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+      const render = (theme) => {
+        const next = theme === "dark" ? "light" : "dark";
+        root.dataset.theme = theme;
+        icon.textContent = next === "light" ? "☼" : "☾";
+        label.textContent = next === "light" ? "DAY" : "NIGHT";
+        toggle.setAttribute("aria-label", `切换至${next === "light" ? "日间" : "夜间"}模式`);
+        toggle.title = toggle.getAttribute("aria-label");
+        themeColor.content = theme === "dark" ? "#090b0c" : "#f2f0e8";
+      };
+
+      render(root.dataset.theme);
+      toggle.addEventListener("click", () => {
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        localStorage.setItem("site-theme", next);
+        render(next);
+      });
+      systemTheme.addEventListener("change", (event) => {
+        if (!localStorage.getItem("site-theme")) render(event.matches ? "dark" : "light");
+      });
+    })();
+  </script>
 </body>
 </html>
